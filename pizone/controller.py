@@ -400,7 +400,8 @@ class Controller:
                 async with session.post(url,
                                         headers=headers,
                                         timeout=Controller.REQUEST_TIMEOUT,
-                                        json=body) as response:
+                                        json=body,
+                                        compress=False) as response:
                     response.raise_for_status()
                 _LOG.info("(aiohttp) Finished Sending to URL: %s command: %s", url, json.dumps(body))
 
