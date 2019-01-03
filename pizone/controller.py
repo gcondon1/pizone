@@ -392,19 +392,24 @@ class Controller:
     async def _send_command_async(self, command: str, data: Any):
         body = {command : data}
         url = f"http://{self.device_ip}/{command}"
-        _LOG.info("Sending to URL: %s command: %s", url, json.dumps(body))
         if True:
             try:
+                _LOG.info("(aiohttp) Sending to URL: %s command: %s", url, json.dumps(body))
+
                 session = self._discovery.session
                 async with session.post(url,
                                         timeout=Controller.REQUEST_TIMEOUT,
                                         json=body) as response:
                     response.raise_for_status()
+                _LOG.info("(aiohttp) Finished Sending to URL: %s command: %s", url, json.dumps(body))
+
             except (asyncio.TimeoutError, aiohttp.ClientError) as ex:
                 self._failed_connection(ex)
                 raise ConnectionError("Unable to connect to the controller") from ex
         else:
             # Do this synchonously. For some reason, this doesn't work with aiohttp
+            _LOG.info("(requests) Sending to URL: %s command: %s", url, json.dumps(body))
+
             body = {command : data}
             url = f"http://{self.device_ip}/{command}"
             try:
@@ -412,6 +417,8 @@ class Controller:
                                    timeout=Controller.REQUEST_TIMEOUT,
                                    data=json.dumps(body)) as response:
                     response.raise_for_status()
+                    _LOG.info("(requests) Finished Sending to URL: %s command: %s", url, json.dumps(body))
+
             except requests.exceptions.RequestException as ex:
                 self._failed_connection(ex)
                 raise ConnectionError("Unable to connect to the controller") from ex
