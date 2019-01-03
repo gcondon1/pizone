@@ -393,7 +393,7 @@ class Controller:
         body = {command : data}
         url = f"http://{self.device_ip}/{command}"
         _LOG.info("Sending to URL: %s command: %s", url, json.dumps(body))
-        if False:
+        if True:
             try:
                 session = self._discovery.session
                 async with session.post(url,
