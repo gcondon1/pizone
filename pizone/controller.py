@@ -395,7 +395,8 @@ class Controller:
         if True:
             try:
                 _LOG.info("(aiohttp) Sending to URL: %s command: %s", url, json.dumps(body))
-                headers = {'Connection': 'close'}
+                headers = {'Connection': 'close',
+                            "User-Agent": "HA"}
                 session = self._discovery.session
                 async with session.post(url,
                                         headers=headers,
