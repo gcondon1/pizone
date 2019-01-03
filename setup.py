@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages # type: ignore
 
-with open("README.md", "r") as fh:
+with open("readme.md", "r") as fh:
     LONG_DESCRIPTION = fh.read()
 
 setup(
