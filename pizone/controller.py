@@ -401,7 +401,7 @@ class Controller:
                                         headers=headers,
                                         timeout=Controller.REQUEST_TIMEOUT,
                                         json=body,
-                                        skip_auto_headers=['Accept-Encoding','Accept',"User-Agent"]) as response:
+                                        skip_auto_headers=['Accept-Encoding','Accept','User-Agent']) as response:
                     response.raise_for_status()
                 _LOG.info("(aiohttp) Finished Sending to URL: %s command: %s", url, json.dumps(body))
 
