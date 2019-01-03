@@ -404,6 +404,8 @@ class Controller:
                                         json=body,
                                         skip_auto_headers=['Accept-Encoding','Accept','USER-AGENT']) as response:
                     response.raise_for_status()
+                await response
+                session.close()
                 _LOG.info("(aiohttp) Finished Sending to URL: %s command: %s", url, json.dumps(body))
 
             except (asyncio.TimeoutError, aiohttp.ClientError) as ex:
