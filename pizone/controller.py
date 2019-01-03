@@ -395,9 +395,10 @@ class Controller:
         if True:
             try:
                 _LOG.info("(aiohttp) Sending to URL: %s command: %s", url, json.dumps(body))
-
+                headers = {'Connection': 'close'}
                 session = self._discovery.session
                 async with session.post(url,
+                                        headers=headers,
                                         timeout=Controller.REQUEST_TIMEOUT,
                                         json=body) as response:
                     response.raise_for_status()
