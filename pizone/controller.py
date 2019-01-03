@@ -395,14 +395,13 @@ class Controller:
         if True:
             try:
                 _LOG.info("(aiohttp) Sending to URL: %s command: %s", url, json.dumps(body))
-                body2 = '{"SystemON":"on"}'
                 headers = {'Connection': 'close'}
                 session = self._discovery.session
                 async with session.post(url,
                                         headers=headers,
                                         timeout=Controller.REQUEST_TIMEOUT,
-                                        data=body2,
-                                        skip_auto_headers=['Accept-Encoding','Accept']) as response:
+                                        json=body,
+                                        skip_auto_headers=['Accept-Encoding','Accept',"User-Agent"]) as response:
                     response.raise_for_status()
                 _LOG.info("(aiohttp) Finished Sending to URL: %s command: %s", url, json.dumps(body))
 
