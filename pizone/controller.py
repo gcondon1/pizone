@@ -401,7 +401,7 @@ class Controller:
                 async with session.post(url,
                                         headers=headers,
                                         timeout=Controller.REQUEST_TIMEOUT,
-                                        json=body2,
+                                        data=body2,
                                         skip_auto_headers=['Accept-Encoding','Accept']) as response:
                     response.raise_for_status()
                 _LOG.info("(aiohttp) Finished Sending to URL: %s command: %s", url, json.dumps(body))
