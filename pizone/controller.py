@@ -420,6 +420,8 @@ class Controller:
             body = {command : data}
             url = f"http://{self.device_ip}/{command}"
             headers = {'Connection': 'close'}
+            s = requests.session()
+            s.config['keep_alive'] = False
             try:
                 with requests.post(url,
                                    timeout=Controller.REQUEST_TIMEOUT,
