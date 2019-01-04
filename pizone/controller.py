@@ -416,6 +416,7 @@ class Controller:
         else:
             # Do this synchonously. For some reason, this doesn't work with aiohttp
             _LOG.info("(requests) Sending to URL: %s command: %s", url, json.dumps(body))
+            headers = {'Connection': 'close'}
 
             body = {command : data}
             url = f"http://{self.device_ip}/{command}"
@@ -423,7 +424,7 @@ class Controller:
             try:
                 with self._session.post(url,
                                    timeout=Controller.REQUEST_TIMEOUT,
-                                   data=json.dumps(body)) as response:
+                                   data=json.dumps(body),headers=headers) as response:
                     response.raise_for_status()
                     _LOG.info("(requests) Finished Sending to URL: %s command: %s", url, json.dumps(body))
 
