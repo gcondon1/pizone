@@ -84,7 +84,8 @@ class Controller:
     async def _initialize(self) -> None:
         """Initalize the session for commands"""
         loop = asyncio.get_event_loop()
-        async with aiohttp.ClientSession(loop=loop) as self.session:
+        self.session = ClientSession(loop=loop)
+
         """Initialize the controller, does not complete until the system is initialised."""
         await self._refresh_system(notify=False)
 
