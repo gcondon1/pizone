@@ -405,7 +405,6 @@ class Controller:
                 _LOG.info("(aiohttp) Sending to URL: %s command: %s", url, json.dumps(body))
 
                 async with self.session.post(url,
-                                        timeout=Controller.REQUEST_TIMEOUT,
                                         data=json.dumps(body)
                                         ) as response:
                     response.raise_for_status()
