@@ -85,8 +85,8 @@ class Controller:
 
     async def _initialize(self) -> None:
         """Initalize the session for commands"""
-        loop = asyncio.get_event_loop()
-        self.session = ClientSession(loop=loop)
+        self.s = requests.session()
+        self.s.keep_alive = False
 
         """Initialize the controller, does not complete until the system is initialised."""
         await self._refresh_system(notify=False)
@@ -419,13 +419,11 @@ class Controller:
 
             body = {command : data}
             url = f"http://{self.device_ip}/{command}"
-            headers = {'Connection': 'close'}
-            s = requests.session()
-            s.keep_alive = False
+
             try:
-                with requests.post(url,
+                with s.post(url,
                                    timeout=Controller.REQUEST_TIMEOUT,
-                                   data=json.dumps(body),headers=headers) as response:
+                                   data=json.dumps(body)) as response:
                     response.raise_for_status()
                     _LOG.info("(requests) Finished Sending to URL: %s command: %s", url, json.dumps(body))
 
