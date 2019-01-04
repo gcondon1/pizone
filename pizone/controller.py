@@ -8,6 +8,8 @@ from enum import Enum
 from typing import Any, Dict, List, Union
 
 import aiohttp
+from aiohttp import ClientSession
+
 import requests
 from async_timeout import timeout
 
