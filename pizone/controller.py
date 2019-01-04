@@ -399,7 +399,7 @@ class Controller:
     async def _send_command_async(self, command: str, data: Any):
         body = {command : data}
         url = f"http://{self.device_ip}/{command}"
-        if True:
+        if False:
             try:
                 _LOG.info("(aiohttp) Sending to URL: %s command: %s", url, json.dumps(body))
 
@@ -419,10 +419,11 @@ class Controller:
 
             body = {command : data}
             url = f"http://{self.device_ip}/{command}"
+            headers = {'Connection': 'close'}
             try:
                 with requests.post(url,
                                    timeout=Controller.REQUEST_TIMEOUT,
-                                   data=json.dumps(body)) as response:
+                                   data=json.dumps(body),headers=headers) as response:
                     response.raise_for_status()
                     _LOG.info("(requests) Finished Sending to URL: %s command: %s", url, json.dumps(body))
 
