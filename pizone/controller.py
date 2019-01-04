@@ -390,8 +390,7 @@ class Controller:
     async def _get_resource(self, resource: str):
         try:
             session = self._discovery.session
-            async with session.get('http://%s/%s' % (self.device_ip, resource),
-                                   timeout=Controller.REQUEST_TIMEOUT) as response:
+            async with session.get('http://%s/%s' % (self.device_ip, resource)) as response:
                 return await response.json()
         except (asyncio.TimeoutError, aiohttp.ClientError) as ex:
             self._failed_connection(ex)
