@@ -78,6 +78,9 @@ class Controller:
         self._reconnect_condition = Condition()
 
         self._sending_lock = Lock()
+        loop = asyncio.get_event_loop()
+        async with aiohttp.ClientSession(loop=loop) as self.session:
+
 
     async def _initialize(self) -> None:
         """Initialize the controller, does not complete until the system is initialised."""
@@ -396,8 +399,7 @@ class Controller:
             try:
                 _LOG.info("(aiohttp) Sending to URL: %s command: %s", url, json.dumps(body))
 
-                session = self._discovery.session
-                async with session.post(url,
+                async with self.session.post(url,
                                         timeout=Controller.REQUEST_TIMEOUT,
                                         data=json.dumps(body)
                                         ) as response:
