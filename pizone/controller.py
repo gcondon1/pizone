@@ -85,8 +85,8 @@ class Controller:
 
     async def _initialize(self) -> None:
         """Initalize the session for commands"""
-        self.s = requests.session()
-        self.s.keep_alive = False
+        self._session = requests.session()
+        self._session.keep_alive = False
 
         """Initialize the controller, does not complete until the system is initialised."""
         await self._refresh_system(notify=False)
@@ -421,7 +421,7 @@ class Controller:
             url = f"http://{self.device_ip}/{command}"
 
             try:
-                with s.post(url,
+                with self._session.post(url,
                                    timeout=Controller.REQUEST_TIMEOUT,
                                    data=json.dumps(body)) as response:
                     response.raise_for_status()
