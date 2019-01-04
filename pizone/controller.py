@@ -409,7 +409,7 @@ class Controller:
                                         data=json.dumps(body)
                                         ) as response:
                     response.raise_for_status()
-                data = await response.json()
+                    data = await response.json()
                 _LOG.info("(aiohttp) Finished Sending command: %s ", json.dumps(body))
 
             except (asyncio.TimeoutError, aiohttp.ClientError) as ex:
