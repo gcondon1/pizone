@@ -8,8 +8,6 @@ from enum import Enum
 from typing import Any, Dict, List, Union
 
 import aiohttp
-from aiohttp import ClientSession
-
 import requests
 from async_timeout import timeout
 
@@ -80,13 +78,12 @@ class Controller:
         self._reconnect_condition = Condition()
 
         self._sending_lock = Lock()
-
-
-
-    async def _initialize(self) -> None:
-        """Initalize the session for commands"""
+        """Create a session for sending commands
+        iZone controller doesnt like sessions being kept alive, so disabled"""
         self._session = requests.session()
         self._session.keep_alive = False
+
+    async def _initialize(self) -> None:
 
         """Initialize the controller, does not complete until the system is initialised."""
         await self._refresh_system(notify=False)
@@ -390,7 +387,8 @@ class Controller:
     async def _get_resource(self, resource: str):
         try:
             session = self._discovery.session
-            async with session.get('http://%s/%s' % (self.device_ip, resource)) as response:
+            async with session.get('http://%s/%s' % (self.device_ip, resource),
+                                   timeout=Controller.REQUEST_TIMEOUT) as response:
                 return await response.json()
         except (asyncio.TimeoutError, aiohttp.ClientError) as ex:
             self._failed_connection(ex)
@@ -399,35 +397,29 @@ class Controller:
     async def _send_command_async(self, command: str, data: Any):
         body = {command : data}
         url = f"http://{self.device_ip}/{command}"
+        _LOG.info("Sending to URL: %s command: %s", url, json.dumps(body))
         if False:
             try:
-                _LOG.info("(aiohttp) Sending to URL: %s command: %s", url, json.dumps(body))
-
-                async with self.session.post(url,
-                                        data=json.dumps(body)
-                                        ) as response:
+                session = self._discovery.session
+                async with session.post(url,
+                                        timeout=Controller.REQUEST_TIMEOUT,
+                                        json=body) as response:
                     response.raise_for_status()
-                    data = await response.json()
-                _LOG.info("(aiohttp) Finished Sending command: %s ", json.dumps(body))
-
             except (asyncio.TimeoutError, aiohttp.ClientError) as ex:
                 self._failed_connection(ex)
                 raise ConnectionError("Unable to connect to the controller") from ex
         else:
             # Do this synchonously. For some reason, this doesn't work with aiohttp
-            _LOG.info("(requests) Sending to URL: %s command: %s", url, json.dumps(body))
-            headers = {'Connection': 'close'}
-
             body = {command : data}
             url = f"http://{self.device_ip}/{command}"
+            headers = {'Connection': 'close'}
 
             try:
                 with self._session.post(url,
                                    timeout=Controller.REQUEST_TIMEOUT,
                                    data=json.dumps(body),headers=headers) as response:
                     response.raise_for_status()
-                    _LOG.info("(requests) Finished Sending to URL: %s command: %s", url, json.dumps(body))
-
+ 
             except requests.exceptions.RequestException as ex:
                 self._failed_connection(ex)
                 raise ConnectionError("Unable to connect to the controller") from ex
